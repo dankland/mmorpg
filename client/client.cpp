@@ -5,7 +5,7 @@
 int main() {
     std::cout << "Hello, World!" << std::endl;
 
-    mmorpg::Position position;
+    core::component::Position position;
     std::cout << "Position: " << position.x << ", " << position.y << std::endl;
 
     return 0;
