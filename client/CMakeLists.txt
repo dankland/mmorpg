@@ -2,11 +2,31 @@ cmake_minimum_required(VERSION 3.25)
 
 project(client)
 
-find_package(GLEW REQUIRED)
-find_package(glfw3 REQUIRED)
-find_package(OpenGL REQUIRED)
+include(FetchContent)
 
-include_directories(${GLEW_INCLUDE_DIRS})
+###
+# glfw3
+###
+FetchContent_Declare(
+    glfw3
+    GIT_REPOSITORY https://github.com/glfw/glfw
+    GIT_TAG 7482de6071d21db77a7236155da44c172a7f6c9e
+    FIND_PACKAGE_ARGS NAMES glfw3
+)
+FetchContent_MakeAvailable(glfw3)
+###
+
+###
+# GLEW
+###
+FetchContent_Declare(
+    GLEW
+    GIT_REPOSITORY https://sourceforge.net/projects/glew
+    GIT_TAG 7482de6071d21db77a7236155da44c172a7f6c9e
+    FIND_PACKAGE_ARGS NAMES GLEW
+)
+FetchContent_MakeAvailable(GLEW)
+###
 
 ###
 # Targets
