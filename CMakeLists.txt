@@ -11,17 +11,11 @@ include_directories(.)
 ###
 # Global Flags
 ###
-set(CMAKE_EXPORT_COMPILE_COMMANDS on)
-add_compile_options(-Wall -Wextra -Wpedantic -Wno-deprecated)
-###
-
-###
-# Flags
-###
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG -g3 -fno-omit-frame-pointer")
 set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O3")
-
+set(CMAKE_EXPORT_COMPILE_COMMANDS on)
+add_compile_options(-Wall)
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif ()
@@ -36,12 +30,12 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/fmtlib/fmt
     GIT_TAG 9.1.0
 )
-FetchContent_MakeAvailable(fmt)
 FetchContent_Declare(
     flecs
     GIT_REPOSITORY https://github.com/SanderMertens/flecs
     GIT_TAG v3.2.1
 )
+FetchContent_MakeAvailable(fmt)
 FetchContent_MakeAvailable(flecs)
 ###
 

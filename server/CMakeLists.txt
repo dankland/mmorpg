@@ -3,6 +3,12 @@ cmake_minimum_required(VERSION 3.25)
 project(server)
 
 ###
+# Global Flags
+###
+add_compile_options(-Wextra -Wpedantic)
+###
+
+###
 # Targets
 ###
 file(GLOB server_src CONFIGURE_DEPENDS "*.cpp" "**/*.cpp" "*.hpp" "**/*.hpp")
