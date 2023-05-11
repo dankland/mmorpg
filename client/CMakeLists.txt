@@ -27,5 +27,5 @@ FetchContent_MakeAvailable(GLEW)
 ###
 file(GLOB client_src CONFIGURE_DEPENDS "*.cpp" "**/*.cpp" "*.hpp" "**/*.hpp")
 add_executable(client ${core_src} ${client_src})
-target_link_libraries(client fmt::fmt flecs::flecs_static glfw GLEW::GLEW ${OPENGL_LIBRARIES})
+target_link_libraries(client PRIVATE fmt::fmt flecs::flecs_static glfw GLEW::GLEW ${OPENGL_LIBRARIES})
 ###
