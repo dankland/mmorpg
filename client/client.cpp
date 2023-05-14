@@ -2,6 +2,7 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include "core/component/position.hpp"
 
 const GLchar* vertex_shader_source =
     "#version 330 core\n"
@@ -23,10 +24,15 @@ const GLchar* fragment_shader_source =
     "colour = out_colour;\n"
     "}\n\0";
 
-void key_callback(GLFWwindow* window, const int key, const int, const int action, const int) {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, GL_TRUE);
-    }
+bool key_states[512] = {};
+core::component::Position position;
+
+void key_callback(GLFWwindow* window,
+                  const int key,
+                  const int scancode,
+                  const int action,
+                  const int mods) {
+    key_states[key] = action != GLFW_RELEASE;
 }
 
 int main() {
@@ -52,7 +58,11 @@ int main() {
 
     // glew
     glewExperimental = GL_TRUE;
-    glewInit();
+    const GLenum err = glewInit();
+    if (GLEW_OK != err) {
+        std::cerr << "glewInit failure\n" << glewGetErrorString(err) << std::endl;
+        return 1;
+    }
 
     // Define the viewport dimensions
     int width = 0;
@@ -63,7 +73,7 @@ int main() {
     GLchar info_log[512];
 
     // Vertex shader
-    GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+    const GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex_shader, 1, &vertex_shader_source, nullptr);
     glCompileShader(vertex_shader);
     // Check for compile time errors
@@ -103,7 +113,7 @@ int main() {
     glDeleteShader(fragment_shader);
 
     // clang-format off
-    const GLfloat vertices[] = {
+    GLfloat vertices[] = {
         -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
          0.0f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
          0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,
@@ -131,6 +141,30 @@ int main() {
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
 
+        if (key_states[GLFW_KEY_ESCAPE]) {
+            glfwSetWindowShouldClose(window, GL_TRUE);
+            break;
+        }
+
+        if (key_states[GLFW_KEY_W]) {
+            position.y += 0.1f;
+        } else if (key_states[GLFW_KEY_S]) {
+            position.y -= 0.1f;
+        }
+        if (key_states[GLFW_KEY_A]) {
+            position.x -= 0.1f;
+        } else if (key_states[GLFW_KEY_D]) {
+            position.x += 0.1f;
+        }
+
+        // Update position
+        vertices[0] = position.x - 0.5f;
+        vertices[1] = position.y - 0.5f;
+        vertices[7] = position.x;
+        vertices[8] = position.y + 0.5f;
+        vertices[14] = position.x + 0.5f;
+        vertices[15] = position.y - 0.5f;
+
         // Clear
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -138,6 +172,9 @@ int main() {
         // Draw
         glUseProgram(shader_program);
         glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glBindVertexArray(0);
 

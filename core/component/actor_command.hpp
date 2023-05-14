@@ -1,6 +1,7 @@
 #ifndef MMORPG_CORE_COMPONENT_ACTOR_COMMAND_HPP
 #define MMORPG_CORE_COMPONENT_ACTOR_COMMAND_HPP
 
+#include <cstdint>
 #include <unordered_set>
 
 namespace core::component {
