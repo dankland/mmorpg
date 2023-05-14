@@ -1,22 +1,24 @@
-#ifndef MMORPG_CORE_COMPONENT_CHARACTER_COMMAND_HPP
-#define MMORPG_CORE_COMPONENT_CHARACTER_COMMAND_HPP
+#ifndef MMORPG_CORE_COMPONENT_ACTOR_COMMAND_HPP
+#define MMORPG_CORE_COMPONENT_ACTOR_COMMAND_HPP
 
 #include <unordered_set>
 
 namespace core::component {
 
-struct CharacterCommand {
+struct ActorCommand {
     enum Type : std::uint64_t
     {
+        None = 0,
+
         MoveUp = std::uint64_t(1) << 0,
         MoveLeft = std::uint64_t(1) << 1,
         MoveDown = std::uint64_t(1) << 2,
         MoveRight = std::uint64_t(1) << 3,
     };
 
-    CharacterCommand() : m_commands{} {
+    ActorCommand() : m_commands{} {
     }
-    explicit CharacterCommand(std::uint64_t commands) : m_commands{commands} {
+    explicit ActorCommand(std::uint64_t commands) : m_commands{commands} {
     }
 
     [[nodiscard]] bool contains(Type command) const {
@@ -41,4 +43,4 @@ struct CharacterCommand {
 
 }  // namespace core::component
 
-#endif  // MMORPG_CORE_COMPONENT_CHARACTER_COMMAND_HPP
+#endif  // MMORPG_CORE_COMPONENT_ACTOR_COMMAND_HPP
