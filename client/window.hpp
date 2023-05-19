@@ -18,6 +18,8 @@ class [[nodiscard]] Window {
    public:
     struct Data {
         bool key_states[512] = {};
+        int width = 800;
+        int height = 600;
     };
 
     Window(const int width, const int height, const std::string_view title);
@@ -25,6 +27,13 @@ class [[nodiscard]] Window {
     ~Window();
 
     void set_viewport();
+
+    [[nodiscard]] float get_aspect() const noexcept {
+        if (m_data.width == 0) {
+            return 1.0f;
+        }
+        return static_cast<float>(m_data.width) / m_data.height;
+    }
 
     [[nodiscard]] bool should_close() const noexcept;
 

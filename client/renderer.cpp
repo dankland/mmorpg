@@ -23,11 +23,10 @@ void OpenGLRenderer::end() {
     m_block_program.bind();
 
     // Camera matrix
-    const auto aspect = 800.0f / 600.0f;
     const auto near = 0.0f;
     const auto far = 100.0f;
     const auto position = glm::vec3(0.0, 0.0, 50.0);
-    const auto projection = glm::ortho(-1.0f * aspect, 1.0f * aspect, -1.0f, 1.0f, near, far);
+    const auto projection = glm::ortho(-1.0f * m_aspect, 1.0f * m_aspect, -1.0f, 1.0f, near, far);
     const auto view =
         glm::lookAt(position, position - glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     const auto matrix = projection * view;

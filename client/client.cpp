@@ -31,6 +31,8 @@ int main() {
 
             window.clear();
 
+            renderer.set_aspect(window.get_aspect());
+
             renderer.start();
 
             renderer.draw_quad(glm::vec2(0.0f, 0.0f),

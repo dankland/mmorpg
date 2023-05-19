@@ -14,6 +14,10 @@ class [[nodiscard]] OpenGLRenderer {
 
     void end();
 
+    void set_aspect(const float f) {
+        m_aspect = f;
+    }
+
     /**
      * @brief Draw a quad bro
      *
@@ -29,6 +33,7 @@ class [[nodiscard]] OpenGLRenderer {
 
    private:
     BlockProgram m_block_program;
+    float m_aspect = 800.0f / 600.0f;
 };
 
 #endif

@@ -29,6 +29,16 @@ void key_callback(GLFWwindow* window,
     data->key_states[key] = action != GLFW_RELEASE;
 }
 
+void window_size_callback(GLFWwindow* window, const int width, const int height) {
+    assert(window);
+    auto data = static_cast<Window::Data*>(glfwGetWindowUserPointer(window));
+
+    data->width = width;
+    data->height = height;
+
+    glViewport(0, 0, width, height);
+}
+
 Window::Window(const int width, const int height, const std::string_view title) {
     // glfw
     const int success = glfwInit();
@@ -40,7 +50,6 @@ Window::Window(const int width, const int height, const std::string_view title) 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     m_window = glfwCreateWindow(width, height, title.data(), nullptr, nullptr);
     if (m_window == nullptr) {
@@ -57,6 +66,7 @@ Window::Window(const int width, const int height, const std::string_view title) 
 
     // Callbacks
     glfwSetKeyCallback(m_window, key_callback);
+    glfwSetWindowSizeCallback(m_window, window_size_callback);
 
     // glew
     glewExperimental = GL_TRUE;
