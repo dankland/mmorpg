@@ -28,10 +28,9 @@ bool ClientConnection::is_afk() const {
     return std::chrono::steady_clock::now() - m_last_message_time > std::chrono::seconds(30);
 }
 
-void ClientConnection::handle_message(std::array<char, 4096> message_data) {
+void ClientConnection::handle_message(const std::string& message) {
     m_last_message_time = std::chrono::steady_clock::now();
 
-    std::string message{message_data.data()};
     spdlog::info("Received message from {}:{} : {}",
                  m_endpoint.address().to_string(),
                  m_endpoint.port(),
@@ -39,8 +38,10 @@ void ClientConnection::handle_message(std::array<char, 4096> message_data) {
 
     core::utility::ServerMessage server_message =
         core::utility::ServerMessage::deserialize(message);
+    // spdlog::info("parsed message: {}", server_message.serialize());
     if (server_message.command().commands() != core::component::ActorCommand::Type::None) {
-        m_entity.set<core::component::ActorCommand>(server_message.command());
+        auto actor_command_buffer = m_entity.get_mut<core::component::ActorCommandBuffer>();
+        actor_command_buffer->push(server_message.command());
     }
     m_entity.get_mut<std::vector<core::utility::ServerMessage::Acknowledgement>>()->emplace_back(
         server_message.sequence());

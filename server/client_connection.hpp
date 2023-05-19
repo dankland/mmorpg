@@ -19,7 +19,7 @@ class ClientConnection {
 
     [[nodiscard]] bool is_afk() const;
 
-    void handle_message(std::array<char, 4096> message);
+    void handle_message(const std::string& message);
 
     friend bool operator==(const ClientConnection& lhs, const ClientConnection& rhs) {
         return lhs.endpoint() == rhs.endpoint();

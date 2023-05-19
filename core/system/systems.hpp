@@ -5,13 +5,10 @@
 
 namespace core::system {
 
-// Updates based on input components (character command)
+extern void load_actor_command(flecs::world& ecs, flecs::entity_t stage);
+
 extern void update_velocity(flecs::world& ecs, flecs::entity_t stage);
 
-// Clears character command
-extern void clear_actor_command(flecs::world& ecs, flecs::entity_t stage);
-
-// Updates based on non-input components
 extern void update_position(flecs::world& ecs, flecs::entity_t stage);
 
 }  // namespace core::system

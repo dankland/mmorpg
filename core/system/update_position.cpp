@@ -1,6 +1,7 @@
+#include "systems.hpp"
+
 #include "core/component/position.hpp"
 #include "core/component/velocity.hpp"
-#include "systems.hpp"
 
 namespace core::system {
 

@@ -9,7 +9,7 @@ namespace server::system {
 void afk_check(flecs::world& ecs) {
     ecs.system<const ClientConnection>("AFKCheck")
         .kind(flecs::OnUpdate)
-        .interval(30.0f)
+        .interval(300.0f)
         .iter([&](flecs::iter& iter) {
             spdlog::info("Running afk check system");
             auto client_connections =
