@@ -2,8 +2,9 @@
 #define MMORPG_CLIENT_PROGRAM_HPP
 
 #include <vector>
-#define GLEW_STATIC
+
 #include <GL/glew.h>
+
 #include "shader.hpp"
 
 class [[nodiscard]] Program {

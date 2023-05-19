@@ -2,7 +2,7 @@
 #define MMORPG_CLIENT_SHADER_HPP
 
 #include <string>
-#define GLEW_STATIC
+
 #include <GL/glew.h>
 
 class [[nodiscard]] Shader {

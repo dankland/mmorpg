@@ -1,7 +1,6 @@
 #ifndef MMORPG_CLIENT_BLOCK_HPP
 #define MMORPG_CLIENT_BLOCK_HPP
 
-#define GLEW_STATIC
 #include <GL/glew.h>
 
 #include "program.hpp"

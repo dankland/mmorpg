@@ -1,10 +1,11 @@
 #include "window.hpp"
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+
 #include <cassert>
 #include <iostream>
 #include <stdexcept>
+
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 [[nodiscard]] std::string glewGetVersionString() {
 #ifdef GLEW_VERSION_2_2

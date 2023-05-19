@@ -1,7 +1,9 @@
 #include "block.hpp"
+
 #include <stdexcept>
-#define GLEW_STATIC
+
 #include <GL/glew.h>
+
 #include "program.hpp"
 #include "renderer.hpp"
 #include "shader.hpp"
