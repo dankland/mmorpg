@@ -48,7 +48,7 @@ void create_actor(flecs::entity entity,
         .set<core::component::Velocity>({})
         .set<core::component::ActorCommand>({})
         .set<core::component::ActorCommandBuffer>({})
-        .emplace<ServerConnection>(socket, std::move(client_endpoint), entity);
+        .emplace<ServerConnection>(socket, client_endpoint, entity);
 }
 
 void setup_systems(flecs::world& ecs) {
@@ -105,7 +105,7 @@ asio::awaitable<void> receive_messages(udp::socket& socket,
                      server_endpoint.address().to_string(),
                      server_endpoint.port());
         if (!entity_created) {
-            create_actor(client_entity, message, &socket, std::move(server_endpoint));
+            create_actor(client_entity, message, &socket, server_endpoint);
             entity_created = true;
         }
         client_entity.get_mut<ServerConnection>()->handle_message(message);

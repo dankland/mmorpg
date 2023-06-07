@@ -64,9 +64,9 @@ struct ServerBroadcast {
                 iss >> token;
                 if (token == "position") {
                     iss >> token;
-                    std::string x = token.substr(1, token.size() - 2);
-                    iss >> token;
-                    std::string y = token.substr(0, token.size() - 1);
+                    auto comma_pos = token.find(',');
+                    auto x = token.substr(1, comma_pos);
+                    auto y = token.substr(comma_pos + 1, token.size() - comma_pos - 1);
                     actor_state.m_position.x = std::stoi(x);
                     actor_state.m_position.y = std::stoi(y);
                 }
