@@ -38,7 +38,6 @@ void ClientConnection::handle_message(const std::string& message) {
 
     core::utility::ClientMessage client_message =
         core::utility::ClientMessage::deserialize_str(message);
-    // spdlog::info("parsed message: {}", client_message.serialize_str());
     if (client_message.m_actor_command.commands() != core::component::ActorCommand::Type::None) {
         auto actor_command_buffer = m_entity.get_mut<core::component::ActorCommandBuffer>();
         actor_command_buffer->push(client_message.m_actor_command);

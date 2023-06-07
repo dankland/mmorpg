@@ -41,6 +41,7 @@ void create_actor(flecs::entity client_entity,
         .add<core::component::Actor>()
         .set<core::component::Position>({0.0f, 0.0f})
         .set<core::component::Velocity>({})
+        .set<core::component::ActorCommand>({})
         .set<core::component::ActorCommandBuffer>({})
         .emplace<ClientConnection>(server_socket, std::move(client_endpoint), client_entity);
 }

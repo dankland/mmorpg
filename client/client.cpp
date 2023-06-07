@@ -14,6 +14,9 @@
 #include "core/component/position.hpp"
 #include "core/component/tags.hpp"
 #include "core/component/velocity.hpp"
+
+#include "core/utility/client_message.hpp"
+
 #include "server_connection.hpp"
 
 using udp = asio::ip::udp;
@@ -43,6 +46,7 @@ void create_actor(flecs::entity entity,
         .add<core::component::Actor>()
         .set<core::component::Position>({0.0f, 0.0f})
         .set<core::component::Velocity>({})
+        .set<core::component::ActorCommand>({})
         .set<core::component::ActorCommandBuffer>({})
         .emplace<ServerConnection>(socket, std::move(client_endpoint), entity);
 }
@@ -68,10 +72,20 @@ void setup_systems(flecs::world& ecs) {
                 std::cout << e.to_json(&desc) << "\n";
             }
         });
-    // system::print_entities(ecs);
-    // system::afk_check(ecs);
-    // system::prepare_server_broadcast(ecs);
-    // system::send_server_broadcast(ecs);
+    ecs.system<const core::component::ActorCommand, ServerConnection>("SendClientState")
+        .kind(flecs::OnUpdate)
+        .each([](flecs::entity e,
+                 const core::component::ActorCommand& actor_command,
+                 ServerConnection& server_connection) {
+            server_connection.socket()->async_send_to(
+                asio::buffer(core::utility::ClientMessage::create(actor_command).serialize_str()),
+                server_connection.endpoint(),
+                [](std::error_code ec, std::size_t bytes_sent) {
+                    if (ec) {
+                        spdlog::error("Failed to send message to server: {}", ec.message());
+                    }
+                });
+        });
 }
 
 asio::awaitable<void> receive_messages(udp::socket& socket,
@@ -137,21 +151,23 @@ int main() {
                 break;
             }
 
-            auto actor_command_buffer = ecs.get_mut<core::component::ActorCommandBuffer>();
-            if (window.get_key(Inputs::KEY_W)) {
-                actor_command_buffer->push(
-                    core::component::ActorCommand{core::component::ActorCommand::Type::MoveUp});
-            } else if (window.get_key(Inputs::KEY_S)) {
-                actor_command_buffer->push(
-                    core::component::ActorCommand{core::component::ActorCommand::Type::MoveDown});
-            }
-            if (window.get_key(Inputs::KEY_A)) {
-                actor_command_buffer->push(
-                    core::component::ActorCommand{core::component::ActorCommand::Type::MoveLeft});
-            } else if (window.get_key(Inputs::KEY_D)) {
-                actor_command_buffer->push(
-                    core::component::ActorCommand{core::component::ActorCommand::Type::MoveRight});
-            }
+            ecs.each([&](flecs::entity e,
+                         core::component::ActorCommandBuffer& actor_command_buffer) {
+                if (window.get_key(Inputs::KEY_W)) {
+                    actor_command_buffer.push(
+                        core::component::ActorCommand{core::component::ActorCommand::Type::MoveUp});
+                } else if (window.get_key(Inputs::KEY_S)) {
+                    actor_command_buffer.push(core::component::ActorCommand{
+                        core::component::ActorCommand::Type::MoveDown});
+                }
+                if (window.get_key(Inputs::KEY_A)) {
+                    actor_command_buffer.push(core::component::ActorCommand{
+                        core::component::ActorCommand::Type::MoveLeft});
+                } else if (window.get_key(Inputs::KEY_D)) {
+                    actor_command_buffer.push(core::component::ActorCommand{
+                        core::component::ActorCommand::Type::MoveRight});
+                }
+            });
 
             ecs.progress();
 

@@ -15,7 +15,6 @@ void prepare_server_broadcast(flecs::world& ecs) {
             ecs.set<core::utility::ServerBroadcast>(
                 core::utility::ServerBroadcast::create(ecs.tick(), {}));
             auto server_broadcast = ecs.get_mut<core::utility::ServerBroadcast>();
-          spdlog::info("mau: {}", server_broadcast->m_actor_states.buffer_size());
             for (size_t i = 0; i < iter.count(); ++i) {
                 flecs::entity e = iter.entity(i);
                 auto actor_command = e.get<core::component::ActorCommand>();

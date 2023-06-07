@@ -6,7 +6,7 @@
 namespace core::system {
 
 void update_velocity(flecs::world& ecs, flecs::entity_t stage) {
-    static float velocity_magnitude = 0.01f;
+    static float velocity_magnitude = 1.0f;
     ecs.system<const core::component::ActorCommand, core::component::Velocity>("UpdateVelocity")
         .kind(stage)
         .each([](const core::component::ActorCommand& character_command,
@@ -14,13 +14,13 @@ void update_velocity(flecs::world& ecs, flecs::entity_t stage) {
             velocity.x = 0.0f;
             velocity.y = 0.0f;
             if (character_command.contains(core::component::ActorCommand::MoveUp)) {
-                velocity.y -= velocity_magnitude;
+                velocity.y = velocity_magnitude;
             }
             if (character_command.contains(core::component::ActorCommand::MoveLeft)) {
-                velocity.x -= velocity_magnitude;
+                velocity.x = -velocity_magnitude;
             }
             if (character_command.contains(core::component::ActorCommand::MoveDown)) {
-                velocity.y += velocity_magnitude;
+                velocity.y = -velocity_magnitude;
             }
             if (character_command.contains(core::component::ActorCommand::MoveRight)) {
                 velocity.x += velocity_magnitude;
