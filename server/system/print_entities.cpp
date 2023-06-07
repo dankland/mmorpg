@@ -8,7 +8,6 @@ namespace server::system {
 
 void print_entities(flecs::world& ecs) {
     ecs.system<const core::component::Actor>("PrintEntities")
-        .interval(60.0f)
         .kind(flecs::OnUpdate)
         .iter([](flecs::iter& iter) {
             for (size_t i = 0; i < iter.count(); ++i) {

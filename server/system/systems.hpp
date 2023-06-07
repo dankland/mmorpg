@@ -9,11 +9,8 @@ extern void print_entities(flecs::world& ecs);
 
 extern void afk_check(flecs::world& ecs);
 
-extern void acknowledge_server_messages(flecs::world& ecs);
-
-extern void accumulate_actor_commands_for_propagation(flecs::world& ecs);
-extern void accumulate_actor_states_for_propagation(flecs::world& ecs);
-extern void propagate_accumulated_server_messages(flecs::world& ecs);
+extern void prepare_server_broadcast(flecs::world& ecs);
+extern void send_server_broadcast(flecs::world& ecs);
 
 }  // namespace server::system
 

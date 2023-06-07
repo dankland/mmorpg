@@ -4,9 +4,8 @@
 #include "flecs.h"
 #include "spdlog/spdlog.h"
 
-#include "core/utility/server_message.hpp"
-#include "core/utility/utility.hpp"
-
+#include "core/component/actor_command.hpp"
+#include "core/component/position.hpp"
 #include "core/component/tags.hpp"
 #include "core/component/velocity.hpp"
 
@@ -21,7 +20,6 @@ namespace server {
 
 void setup_singletons(flecs::world& ecs) {
     ecs.set<std::unordered_map<udp::endpoint, flecs::entity>>({});
-    ecs.set<std::vector<core::utility::ServerMessage>>({});
 }
 
 void setup_reflection(flecs::world& ecs) {
@@ -31,7 +29,7 @@ void setup_reflection(flecs::world& ecs) {
     ecs.component<core::component::ActorCommandBuffer>()
         .member<std::size_t>("m_head")
         .member<std::size_t>("m_tail")
-        .member<core::component::ActorCommand[core::component::ActorCommandBuffer::size]>(
+        .member<core::component::ActorCommand[core::component::ActorCommandBuffer::buffer_size]>(
             "m_command_buffer");
 }
 
@@ -39,12 +37,11 @@ void create_actor(flecs::entity client_entity,
                   const std::string& actor_name,
                   udp::socket* server_socket,
                   udp::endpoint client_endpoint) {
-    client_entity.set_name(actor_name.c_str());
-    client_entity.add<core::component::Actor>()
+    client_entity.set_name(actor_name.c_str())
+        .add<core::component::Actor>()
         .set<core::component::Position>({0.0f, 0.0f})
         .set<core::component::Velocity>({})
         .set<core::component::ActorCommandBuffer>({})
-        .set<std::vector<core::utility::ServerMessage::Acknowledgement>>({})
         .emplace<ClientConnection>(server_socket, std::move(client_endpoint), client_entity);
 }
 
@@ -53,12 +50,10 @@ void setup_systems(flecs::world& ecs) {
     core::system::update_velocity(ecs, flecs::OnUpdate);
     core::system::update_position(ecs, flecs::OnUpdate);
 
-    system::acknowledge_server_messages(ecs);
     system::print_entities(ecs);
     system::afk_check(ecs);
-    system::accumulate_actor_commands_for_propagation(ecs);
-    system::accumulate_actor_states_for_propagation(ecs);
-    system::propagate_accumulated_server_messages(ecs);
+    system::prepare_server_broadcast(ecs);
+    system::send_server_broadcast(ecs);
 }
 
 asio::awaitable<void> receive_messages(unsigned short port, flecs::world& ecs) {
@@ -88,8 +83,9 @@ asio::awaitable<void> receive_messages(unsigned short port, flecs::world& ecs) {
                          client_endpoint.address().to_string(),
                          client_endpoint.port());
             create_actor(client_entity, message, &server_socket, std::move(client_endpoint));
+        } else {
+            client_entity.get_mut<ClientConnection>()->handle_message(message);
         }
-        client_entity.get_mut<ClientConnection>()->handle_message(message);
     }
 }
 
@@ -111,7 +107,7 @@ int main() {
         io_context.run();
     }};
 
-    ecs.app().target_fps(60).run();
+    ecs.app().target_fps(1.0).run();
 
     return 0;
 }

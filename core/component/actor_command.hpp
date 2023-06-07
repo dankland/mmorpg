@@ -4,6 +4,8 @@
 #include <array>
 #include <cstdint>
 
+#include <msgpack.hpp>
+
 namespace core::component {
 
 struct ActorCommand {
@@ -38,37 +40,41 @@ struct ActorCommand {
         return m_commands;
     }
 
+    MSGPACK_DEFINE_MAP(m_commands)
+
    private:
     std::uint64_t m_commands = Type::None;
 };
 
 class ActorCommandBuffer {
    public:
-    static constexpr std::size_t size = 12;
+    static constexpr std::size_t buffer_size = 12;
 
     ActorCommandBuffer() : m_command_buffer{} {
     }
 
     void push(ActorCommand command) {
         m_command_buffer[m_tail] = command;
-        m_tail = (m_tail + 1) % size;
+        m_tail = (m_tail + 1) % buffer_size;
     }
     [[nodiscard]] ActorCommand pop() {
         ActorCommand command = m_command_buffer[m_head];
-        m_head = (m_head + 1) % size;
+        m_head = (m_head + 1) % buffer_size;
         return command;
     }
     [[nodiscard]] bool empty() const {
         return m_head == m_tail;
     }
     [[nodiscard]] bool full() const {
-        return (m_tail + 1) % size == m_head;
+        return (m_tail + 1) % buffer_size == m_head;
     }
+
+    MSGPACK_DEFINE_MAP(m_head, m_tail, m_command_buffer)
 
    private:
     std::size_t m_head = 0;
     std::size_t m_tail = 0;
-    std::array<ActorCommand, size> m_command_buffer;
+    std::array<ActorCommand, buffer_size> m_command_buffer;
 };
 
 }  // namespace core::component

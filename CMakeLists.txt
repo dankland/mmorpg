@@ -19,6 +19,7 @@ add_compile_options(-Wall -Wno-deprecated)
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif ()
+add_definitions(-DMSGPACK_USE_BOOST=OFF -DMSGPACK_NO_BOOST -DMSGPACK_CXX20=ON)
 ###
 
 ###
@@ -43,6 +44,11 @@ FetchContent_Declare(
     GIT_TAG v3.2.1
 )
 FetchContent_Declare(
+    msgpackc
+    GIT_REPOSITORY https://github.com/msgpack/msgpack-c
+    GIT_TAG cpp-6.0.0
+)
+FetchContent_Declare(
     asio
     GIT_REPOSITORY https://github.com/chriskohlhoff/asio
     GIT_TAG asio-1-28-0
@@ -50,6 +56,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(fmt)
 FetchContent_MakeAvailable(spdlog)
 FetchContent_MakeAvailable(flecs)
+FetchContent_MakeAvailable(msgpackc)
 
 FetchContent_GetProperties(asio)
 if(NOT asio_POPULATED)

@@ -1,7 +1,7 @@
 #include "client_connection.hpp"
 
 #include "core/component/actor_command.hpp"
-#include "core/utility/server_message.hpp"
+#include "core/utility/client_message.hpp"
 
 #include "spdlog/spdlog.h"
 
@@ -36,15 +36,13 @@ void ClientConnection::handle_message(const std::string& message) {
                  m_endpoint.port(),
                  message);
 
-    core::utility::ServerMessage server_message =
-        core::utility::ServerMessage::deserialize(message);
-    // spdlog::info("parsed message: {}", server_message.serialize());
-    if (server_message.command().commands() != core::component::ActorCommand::Type::None) {
+    core::utility::ClientMessage client_message =
+        core::utility::ClientMessage::deserialize_str(message);
+    // spdlog::info("parsed message: {}", client_message.serialize_str());
+    if (client_message.m_actor_command.commands() != core::component::ActorCommand::Type::None) {
         auto actor_command_buffer = m_entity.get_mut<core::component::ActorCommandBuffer>();
-        actor_command_buffer->push(server_message.command());
+        actor_command_buffer->push(client_message.m_actor_command);
     }
-    m_entity.get_mut<std::vector<core::utility::ServerMessage::Acknowledgement>>()->emplace_back(
-        server_message.sequence());
 }
 
 }  // namespace server

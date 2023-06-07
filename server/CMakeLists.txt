@@ -13,5 +13,6 @@ add_compile_options(-Wextra -Wpedantic)
 ###
 file(GLOB server_src CONFIGURE_DEPENDS "*.cpp" "**/*.cpp" "*.hpp" "**/*.hpp")
 add_executable(server ${core_src} ${server_src})
+target_include_directories(server PRIVATE ${msgpackc_SOURCE_DIR}/include)
 target_link_libraries(server PRIVATE fmt::fmt spdlog::spdlog flecs::flecs_static asio)
 ###
